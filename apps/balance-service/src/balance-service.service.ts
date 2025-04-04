@@ -3,6 +3,7 @@ import {
   FileStorageService,
   LoggingService,
   ErrorHandlingService,
+  Balance,
 } from '@app/shared';
 import { UpdateBalanceDto } from './dto/balance.dto';
 import { RateService } from 'apps/rate-service/src/rate-service.service';
@@ -18,10 +19,10 @@ export class BalanceService {
     private readonly rateService: RateService,
   ) {}
 
-  async getUserBalance(userId: string): Promise<Record<string, number>> {
+  async getUserBalance(userId: string): Promise<Balance> {
     const balances = (await this.fileStorageService.readData(
       BALANCE_FILE,
-    )) as Record<string, any>;
+    )) as Record<string, Balance>;
     return balances[userId] || {};
   }
 
@@ -37,7 +38,7 @@ export class BalanceService {
 
     const balances = (await this.fileStorageService.readData(
       BALANCE_FILE,
-    )) as Record<string, Record<string, number>>;
+    )) as Record<string, Balance>;
     const userBalances = balances[userId] || {};
 
     if (isAdding) {
@@ -45,16 +46,16 @@ export class BalanceService {
     } else {
       const currentBalance = userBalances[asset] || 0;
 
-      if (currentBalance < dto.amount) {
+      if (currentBalance < amount) {
         this.errorHandlingService.throwBadRequest(
           'Insufficient balance to remove',
         );
       }
 
-      userBalances[dto.asset] -= amount;
+      userBalances[asset] -= amount;
 
-      if (userBalances[dto.asset] === 0) {
-        delete userBalances[dto.asset]; // Remove asset if balance is 0
+      if (userBalances[asset] === 0) {
+        delete userBalances[asset];
       }
     }
 
@@ -62,7 +63,6 @@ export class BalanceService {
     await this.fileStorageService.writeData(BALANCE_FILE, balances);
   }
 
-  // Method to calculate total balance value in specified currency
   async calculateTotalBalanceInCurrency(
     userId: string,
     currency: string,
@@ -79,5 +79,43 @@ export class BalanceService {
     }
 
     return totalValue;
+  }
+
+  async rebalance(userId: string, targetPercentages: Balance): Promise<void> {
+    const balances = await this.getUserBalance(userId);
+
+    if (Object.keys(balances).length === 0) {
+      throw new Error('User has no balances to rebalance.');
+    }
+
+    const totalPercentage = Object.values(targetPercentages).reduce(
+      (acc, p) => acc + p,
+      0,
+    );
+    if (totalPercentage !== 100) {
+      throw new Error('Target percentages must sum up to 100%.');
+    }
+
+    const totalValue = await this.calculateTotalBalanceInCurrency(
+      userId,
+      'usd',
+    );
+
+    const newBalances: Balance = {};
+
+    for (const [asset, targetPercent] of Object.entries(targetPercentages)) {
+      const rate = await this.rateService.getRate(asset, 'usd');
+      const targetValue = (targetPercent / 100) * totalValue;
+      const targetAmount = targetValue / rate;
+
+      newBalances[asset] = targetAmount;
+    }
+
+    const allBalances = (await this.fileStorageService.readData(
+      BALANCE_FILE,
+    )) as Record<string, Balance>;
+    allBalances[userId] = newBalances;
+
+    await this.fileStorageService.writeData(BALANCE_FILE, allBalances);
   }
 }

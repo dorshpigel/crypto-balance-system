@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Headers, Query } from '@nestjs/common';
 import { BalanceService } from './balance-service.service';
 import { UpdateBalanceDto } from './dto/balance.dto';
+import { Balance } from '@app/shared';
 
 @Controller('balances')
 export class BalanceController {
@@ -40,5 +41,14 @@ export class BalanceController {
         currency,
       );
     return { totalValue };
+  }
+
+  @Post('rebalance')
+  async rebalance(
+    @Headers('X-User-ID') userId: string,
+    @Body() targetPercentages: Balance,
+  ) {
+    await this.balanceService.rebalance(userId, targetPercentages);
+    return { message: 'Rebalance successful' };
   }
 }
