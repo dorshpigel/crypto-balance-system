@@ -30,7 +30,7 @@ export class RateService {
     const lastUpdated = cache?.__timestamp || 0;
 
     if (now - lastUpdated < CACHE_TTL_MS && cache[currency]) {
-      this.logger.log(`Using cached rates for ${currency}`);
+      this.logger.log(`Using cached rates for ${currency}`,'getRates-cache');
       return cache[currency] as rate;
     }
 
@@ -45,7 +45,7 @@ export class RateService {
     };
 
     await this.fileStorageService.writeData(RATES_FILE, updatedCache);
-    this.logger.log(`Fetched fresh rates for ${currency}`);
+    this.logger.log(`Fetched fresh rates for ${currency}`,'getRates-fresh');
     return rates;
   }
 
@@ -56,14 +56,14 @@ export class RateService {
 
     const currencies = ['usd'];
 
-    this.logger.log(`Running scheduled rate refresh...`);
+    this.logger.log(`Running scheduled rate refresh...`,'CronJob-start');
 
     for (const currency of currencies) {
       try {
         await this.getRates(currency);
-        this.logger.log(`Successfully refreshed rates for ${currency}`);
+        this.logger.log(`Successfully refreshed rates for ${currency}`,'CronJob-end');
       } catch (error) {
-        this.logger.error(`Failed to refresh rates for ${currency}`, error);
+        this.logger.error(`Failed to refresh rates for ${currency}`, 'CroJob-end');
       }
     }
   }

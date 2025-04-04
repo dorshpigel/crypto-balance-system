@@ -1,26 +1,26 @@
 {
-  "__timestamp": 1743783420008,
+  "__timestamp": 1743787440012,
   "usd": {
     "bitcoin": {
-      "usd": 83439,
-      "usd_market_cap": 1654038041246.8877,
-      "usd_24h_vol": 46071387385.84497,
-      "usd_24h_change": 1.4133495741202504,
-      "last_updated_at": 1743783416
+      "usd": 83338,
+      "usd_market_cap": 1647999735338.8926,
+      "usd_24h_vol": 46701539886.706764,
+      "usd_24h_change": 1.9664700528372645,
+      "last_updated_at": 1743787433
     },
     "ethereum": {
-      "usd": 1801.88,
-      "usd_market_cap": 217293237155.3522,
-      "usd_24h_vol": 17849731423.153587,
-      "usd_24h_change": 0.8320823457341843,
-      "last_updated_at": 1743783420
+      "usd": 1795.84,
+      "usd_market_cap": 215917891242.56314,
+      "usd_24h_vol": 18715624381.81193,
+      "usd_24h_change": 1.4528547230573468,
+      "last_updated_at": 1743787434
     },
     "oobit": {
-      "usd": 0.01874347,
-      "usd_market_cap": 6556146.124532777,
-      "usd_24h_vol": 605291.615048265,
-      "usd_24h_change": 0.9441255524838859,
-      "last_updated_at": 1743783419
+      "usd": 0.01636397,
+      "usd_market_cap": 5730206.040834379,
+      "usd_24h_vol": 598506.9837606231,
+      "usd_24h_change": -12.128588089437795,
+      "last_updated_at": 1743787437
     }
   }
 }

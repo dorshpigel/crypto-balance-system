@@ -30,6 +30,7 @@ export class BalanceService {
     dto: UpdateBalanceDto,
     isAdding: boolean,
   ): Promise<void> {
+    const { asset, amount } = dto;
     if (!userId) {
       this.errorHandlingService.throwBadRequest('User ID is required');
     }
@@ -40,9 +41,9 @@ export class BalanceService {
     const userBalances = balances[userId] || {};
 
     if (isAdding) {
-      userBalances[dto.asset] = (userBalances[dto.asset] || 0) + dto.amount;
+      userBalances[asset] = (userBalances[asset] || 0) + amount;
     } else {
-      const currentBalance = userBalances[dto.asset] || 0;
+      const currentBalance = userBalances[asset] || 0;
 
       if (currentBalance < dto.amount) {
         this.errorHandlingService.throwBadRequest(
@@ -50,7 +51,7 @@ export class BalanceService {
         );
       }
 
-      userBalances[dto.asset] -= dto.amount;
+      userBalances[dto.asset] -= amount;
 
       if (userBalances[dto.asset] === 0) {
         delete userBalances[dto.asset]; // Remove asset if balance is 0
@@ -70,10 +71,10 @@ export class BalanceService {
     const rates = await this.rateService.getRates(currency);
     let totalValue = 0;
 
-    for (const [asset, amount] of Object.entries(balances)) {
-      const rate = rates[asset.toLowerCase()];
+    for (const [currencyName, balance] of Object.entries(balances)) {
+      const rate = rates[currencyName];
       if (rate) {
-        totalValue += amount * rate;
+        totalValue += rate[currency] * balance;
       }
     }
 
