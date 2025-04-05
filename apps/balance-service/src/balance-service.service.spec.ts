@@ -4,7 +4,6 @@ import {
   FileStorageService,
   LoggingService,
   ErrorHandlingService,
-  Balance,
 } from '@app/shared';
 import { RateService } from '@app/rate-service';
 import { UpdateBalanceDto } from './dto/balance.dto';
