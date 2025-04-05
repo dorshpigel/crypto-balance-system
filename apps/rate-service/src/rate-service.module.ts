@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RateServiceController } from './rate-service.controller';
+import { RateController } from './rate-service.controller';
 import { RateService } from './rate-service.service';
 import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -13,7 +13,7 @@ import { SharedModule } from '@app/shared';
     ConfigModule.forRoot({ isGlobal: true }),
     SharedModule,
   ],
-  controllers: [RateServiceController],
+  controllers: [RateController],
   providers: [RateService],
   exports: [RateService],
 })

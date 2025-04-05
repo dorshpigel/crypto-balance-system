@@ -6,7 +6,8 @@ import {
   Balance,
 } from '@app/shared';
 import { UpdateBalanceDto } from './dto/balance.dto';
-import { RateService } from 'apps/rate-service/src/rate-service.service';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
 
 const BALANCE_FILE = process.env.BALANCE_FILE || 'data/balances';
 
@@ -16,7 +17,7 @@ export class BalanceService {
     private readonly fileStorageService: FileStorageService,
     private readonly loggingService: LoggingService,
     private readonly errorHandlingService: ErrorHandlingService,
-    private readonly rateService: RateService,
+    private readonly httpService: HttpService,
   ) {}
 
   async getUserBalance(userId: string): Promise<Balance> {
@@ -68,7 +69,10 @@ export class BalanceService {
     currency: string,
   ): Promise<number> {
     const balances = await this.getUserBalance(userId);
-    const rates = await this.rateService.getRates(currency);
+    const res = await lastValueFrom(
+      this.httpService.get(`/rates?currency=${currency}`)
+    );
+    const rates = res.data;
     let totalValue = 0;
 
     for (const [currencyName, balance] of Object.entries(balances)) {
@@ -104,7 +108,10 @@ export class BalanceService {
     const newBalances: Balance = {};
 
     for (const [asset, targetPercent] of Object.entries(targetPercentages)) {
-      const rate = await this.rateService.getRate(asset, 'usd');
+      const res = await lastValueFrom(
+        this.httpService.get(`/rates/${asset}?currency=usd`)
+      );
+      const rate = res.data;
       const targetValue = (targetPercent / 100) * totalValue;
       const targetAmount = targetValue / rate;
 
