@@ -6,7 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build --webpack",
+    "build:libs": "nest build shared",
+    "build:all": "npm run build:libs && npm run build:balance-service && npm run build:rate-service",
+    "build:balance-service": "nest build balance-service",
+    "build:rate-service": "nest build rate-service",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start-rate": "npm run start:dev rate-service",
