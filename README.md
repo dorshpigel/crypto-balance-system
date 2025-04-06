@@ -19,7 +19,7 @@
 - 🔄 **Scheduled Cron Job** in `rate-service` to refresh rates every minute
 - 🚦 **Throttling** enabled with `@nestjs/throttler` to limit excessive requests (e.g., 10 req/min per IP)
 - 📄 **Swagger API Docs** auto-generated for each service
-- 🧪 **Unit tests** with Jest and ts-jest
+- 🧪 **Unit tests** with Jest and ts-jest (just run 'npm run test' on terminal)
 - 🛡 Simple `.env` config and local scripts for all OSes
 
 ---
