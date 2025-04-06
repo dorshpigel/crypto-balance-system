@@ -33,5 +33,16 @@ After services are running, visit:
 
 ---
 
-## 🧩 Folder Structure
+## 🧩 Setup:
+
+- **Linux/Mac**: run bash file on root
+- **Windows**: run deploy/stop/status files on root
+- **General node setup instructions**: On project root after adding the env file,on console:
+1.npm i
+2.npm run build
+3.npm run start-rate
+4.In a new terminal - npm run start-balance
+5.You should be good to go.
+
+For any issues please feel free to reach out.
 
